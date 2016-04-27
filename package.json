@@ -11,6 +11,7 @@
     "url": "https://github.com/feross/cross-zip/issues"
   },
   "devDependencies": {
+    "mkdirp": "^0.5.1",
     "standard": "^6.0.8",
     "tape": "^4.0.0"
   },
@@ -32,6 +33,6 @@
     "url": "git://github.com/feross/cross-zip.git"
   },
   "scripts": {
-    "test": "standard"
+    "test": "standard && tape test/*.js"
   }
 }
