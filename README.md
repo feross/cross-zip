@@ -23,8 +23,26 @@ var zip = require('cross-zip')
 var inPath = path.join(__dirname, 'myFolder') // folder to zip
 var outPath = path.join(__dirname, 'myFile.zip') // name of output zip file
 
-zip(inPath, outPath)
+zip.zipSync(inPath, outPath)
 ```
+
+## api
+
+### `zip.zip(inPath, outPath, callback)`
+
+Zip the folder at `inPath` and save it to a .zip file at `outPath`.
+
+### `zip.zipSync(inPath, outPath)`
+
+Sync version of `zip.zip`.
+
+### `zip.unzip(inPath, outPath)`
+
+Unzip the .zip file at `inPath` into the folder at `outPath`.
+
+### `zip.unzipSync(inPath, outPath)`
+
+Sync version of `zip.unzip`.
 
 ## license
 
