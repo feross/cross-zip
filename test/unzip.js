@@ -1,6 +1,7 @@
 var fs = require('fs')
 var mkdirp = require('mkdirp')
 var path = require('path')
+var rimraf = require('rimraf')
 var test = require('tape')
 var zip = require('../')
 
@@ -11,9 +12,10 @@ var tmpPath = path.join(__dirname, 'tmp')
 mkdirp.sync(tmpPath)
 
 test('unzipSync', function (t) {
+  var tmpFilePath = path.join(tmpPath, 'file.txt')
+  rimraf.sync(tmpFilePath)
   zip.unzipSync(fileZipPath, tmpPath)
 
-  var tmpFilePath = path.join(tmpPath, 'file.txt')
   var tmpFile = fs.readFileSync(tmpFilePath)
   var file = fs.readFileSync(filePath)
 
@@ -22,15 +24,19 @@ test('unzipSync', function (t) {
 })
 
 test('unzip', function (t) {
-  t.plan(2)
+  t.plan(3)
 
-  zip.unzip(fileZipPath, tmpPath, function (err) {
+  var tmpFilePath = path.join(tmpPath, 'file.txt')
+  rimraf(tmpFilePath, function (err) {
     t.error(err)
 
-    var tmpFilePath = path.join(tmpPath, 'file.txt')
-    var tmpFile = fs.readFileSync(tmpFilePath)
-    var file = fs.readFileSync(filePath)
+    zip.unzip(fileZipPath, tmpPath, function (err) {
+      t.error(err)
 
-    t.deepEqual(tmpFile, file)
+      var tmpFile = fs.readFileSync(tmpFilePath)
+      var file = fs.readFileSync(filePath)
+
+      t.deepEqual(tmpFile, file)
+    })
   })
 })
