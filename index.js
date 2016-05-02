@@ -7,14 +7,26 @@ module.exports = {
 
 var cp = require('child_process')
 var path = require('path')
+var rimraf = require('rimraf')
 
 function zip (inPath, outPath, cb) {
-  cp.exec(getZipCommand(inPath, outPath), function (err) {
-    cb(err)
-  })
+  if (process.platform === 'win32') {
+    rimraf(outPath, doZip)
+  } else {
+    doZip()
+  }
+
+  function doZip () {
+    cp.exec(getZipCommand(inPath, outPath), function (err) {
+      cb(err)
+    })
+  }
 }
 
 function zipSync (inPath, outPath) {
+  if (process.platform === 'win32') {
+    rimraf.sync(outPath)
+  }
   cp.execSync(getZipCommand(inPath, outPath))
 }
 

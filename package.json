@@ -34,5 +34,8 @@
   },
   "scripts": {
     "test": "standard && tape test/*.js"
+  },
+  "dependencies": {
+    "rimraf": "^2.5.2"
   }
 }
