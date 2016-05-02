@@ -32,15 +32,11 @@ function zipSync (inPath, outPath) {
 
 function getZipCommand (inPath, outPath) {
   if (process.platform === 'win32') {
-    return (
-      'powershell.exe -nologo -noprofile -command "& { ' +
-      'Add-Type -A \'System.IO.Compression.FileSystem\'; ' +
-      `[IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}'); }"`
-    )
+    return `powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}'); }"`
   } else {
     var dirPath = path.dirname(inPath)
     var fileName = path.basename(inPath)
-    return `cd ${dirPath} && zip -r -y ${outPath} ${fileName}`
+    return `cd ${dirPath} && zip -r -y ${JSON.stringify(outPath)} ${JSON.stringify(fileName)}`
   }
 }
 
@@ -56,12 +52,8 @@ function unzipSync (inPath, outPath) {
 
 function getUnzipCommand (inPath, outPath) {
   if (process.platform === 'win32') {
-    return (
-      'powershell.exe -nologo -noprofile -command "& { ' +
-      'Add-Type -A \'System.IO.Compression.FileSystem\'; ' +
-      `[IO.Compression.ZipFile]::ExtractToDirectory('${inPath}', '${outPath}'); }"`
-    )
+    return `powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('${inPath}', '${outPath}'); }"`
   } else {
-    return `unzip -o ${inPath} -d ${outPath}`
+    return `unzip -o ${JSON.stringify(inPath)} -d ${JSON.stringify(outPath)}`
   }
 }
