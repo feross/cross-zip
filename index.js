@@ -6,12 +6,22 @@ module.exports = {
 }
 
 var cp = require('child_process')
+var fs = require('fs')
+var os = require('os')
 var path = require('path')
-var rimraf = require('rimraf')
 
 function zip (inPath, outPath, cb) {
+  // Windows zip command cannot zip files, only directories. So move the file into
+  // a temporary directory before zipping.
   if (process.platform === 'win32') {
-    rimraf(outPath, doZip)
+    fs.stat(inPath, function (err, stats) {
+      if (err) return cb(err)
+      if (stats.isFile()) {
+        copyToTemp()
+      } else {
+        doZip()
+      }
+    })
   } else {
     doZip()
   }
@@ -21,11 +31,30 @@ function zip (inPath, outPath, cb) {
       cb(err)
     })
   }
+
+  function copyToTemp () {
+    fs.readFile(inPath, function (err, inFile) {
+      if (err) return cb(err)
+      var tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
+      fs.mkdir(tmpPath, function (err) {
+        if (err) return cb(err)
+        fs.writeFile(path.join(tmpPath, path.basename(inPath)), inFile, function (err) {
+          if (err) return cb(err)
+          inPath = tmpPath
+          doZip()
+        })
+      })
+    })
+  }
 }
 
 function zipSync (inPath, outPath) {
-  if (process.platform === 'win32') {
-    rimraf.sync(outPath)
+  if (process.platform === 'win32' && fs.statSync(inPath).isFile()) {
+    var inFile = fs.readFileSync(inPath)
+    var tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
+    fs.mkdirSync(tmpPath)
+    fs.writeFileSync(path.join(tmpPath, path.basename(inPath)), inFile)
+    inPath = tmpPath
   }
   cp.execSync(getZipCommand(inPath, outPath))
 }
