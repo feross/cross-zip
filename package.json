@@ -17,14 +17,14 @@
   },
   "homepage": "https://github.com/feross/cross-zip",
   "keywords": [
-    "zip",
     "ZIP",
-    "windows",
-    "os x",
-    "mac",
-    "linux",
     "cross platform",
-    "cross-platform"
+    "cross-platform",
+    "linux",
+    "mac",
+    "os x",
+    "windows",
+    "zip"
   ],
   "license": "MIT",
   "main": "index.js",
@@ -34,5 +34,8 @@
   },
   "scripts": {
     "test": "standard && tape test/*.js"
+  },
+  "dependencies": {
+    "rimraf": "^2.5.2"
   }
 }
