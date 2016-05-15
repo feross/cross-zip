@@ -30,15 +30,17 @@ zip.zipSync(inPath, outPath)
 
 ### `zip.zip(inPath, outPath, callback)`
 
-Zip the folder at `inPath` and save it to a .zip file at `outPath`.
+Zip the folder at `inPath` and save it to a .zip file at `outPath`. `callback` is
+called with an `Error` or `null`.
 
 ### `zip.zipSync(inPath, outPath)`
 
 Sync version of `zip.zip`.
 
-### `zip.unzip(inPath, outPath)`
+### `zip.unzip(inPath, outPath, callback)`
 
-Unzip the .zip file at `inPath` into the folder at `outPath`.
+Unzip the .zip file at `inPath` into the folder at `outPath`. `callback` is called
+with an `Error` or `null`.
 
 ### `zip.unzipSync(inPath, outPath)`
 
