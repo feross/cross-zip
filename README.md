@@ -28,19 +28,19 @@ zip.zipSync(inPath, outPath)
 
 ## api
 
-### `zip.zip(inPath, outPath, callback)`
+### `zip.zip(inPath, outPath, [callback])`
 
-Zip the folder at `inPath` and save it to a .zip file at `outPath`. `callback` is
-called with an `Error` or `null`.
+Zip the folder at `inPath` and save it to a .zip file at `outPath`. If a `callback`
+is passed, then it is called with an `Error` or `null`.
 
 ### `zip.zipSync(inPath, outPath)`
 
 Sync version of `zip.zip`.
 
-### `zip.unzip(inPath, outPath, callback)`
+### `zip.unzip(inPath, outPath, [callback])`
 
-Unzip the .zip file at `inPath` into the folder at `outPath`. `callback` is called
-with an `Error` or `null`.
+Unzip the .zip file at `inPath` into the folder at `outPath`. If a `callback` is
+passed, then it is called with an `Error` or `null`.
 
 ### `zip.unzipSync(inPath, outPath)`
 
