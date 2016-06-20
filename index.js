@@ -79,7 +79,7 @@ function getZipCommand (inPath, outPath) {
   } else {
     var dirPath = path.dirname(inPath)
     var fileName = path.basename(inPath)
-    return `cd ${dirPath} && zip -r -y ${JSON.stringify(outPath)} ${JSON.stringify(fileName)}`
+    return `cd '${dirPath}' && zip -r -y '${JSON.stringify(outPath)}' '${JSON.stringify(fileName)}'`
   }
 }
 
