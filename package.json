@@ -1,7 +1,7 @@
 {
   "name": "cross-zip",
   "description": "Cross-platform .zip file creation",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "author": {
     "name": "Feross Aboukhadijeh",
     "email": "feross@feross.org",
