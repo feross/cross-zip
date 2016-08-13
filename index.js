@@ -53,7 +53,7 @@ function zip (inPath, outPath, cb) {
   }
 
   function doZip2 () {
-    cp.exec(getZipCommand(inPath, outPath), function (err) {
+    cp.exec(getZipCommand(inPath, outPath), { maxBuffer: Infinity }, function (err) {
       cb(err)
     })
   }
@@ -85,7 +85,7 @@ function getZipCommand (inPath, outPath) {
 
 function unzip (inPath, outPath, cb) {
   if (!cb) cb = function () {}
-  cp.exec(getUnzipCommand(inPath, outPath), function (err) {
+  cp.exec(getUnzipCommand(inPath, outPath), { maxBuffer: Infinity }, function (err) {
     cb(err)
   })
 }
