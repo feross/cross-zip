@@ -59,6 +59,10 @@ On Windows 7 or earlier, you will need to install these manually in order for
 
 - [Stack Overflow - zipping from command line in Windows](https://stackoverflow.com/questions/17546016/how-can-you-zip-or-unzip-from-the-command-prompt-using-only-windows-built-in-ca)
 
+## related
+
+- [cross-zip-cli](https://github.com/jprichardson/cross-zip-cli): CLI version of cross-zip.
+
 ## license
 
 MIT. Copyright (c) [Feross Aboukhadijeh](http://feross.org).
