@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "mkdirp": "^0.5.1",
-    "standard": "*",
+    "standard": ">=13.0.1",
     "tape": "^4.0.0"
   },
   "homepage": "https://github.com/feross/cross-zip",
