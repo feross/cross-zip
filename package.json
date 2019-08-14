@@ -36,6 +36,6 @@
     "test": "standard && tape test/*.js"
   },
   "dependencies": {
-    "rimraf": "^2.5.2"
+    "rimraf": "^3.0.0"
   }
 }
