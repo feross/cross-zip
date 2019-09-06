@@ -75,7 +75,7 @@ function zipSync (inPath, outPath) {
 
 function getZipCommand (inPath, outPath) {
   if (process.platform === 'win32') {
-    return `powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}'); }"`
+    return `powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; Add-Type -A 'System.Text.Encoding'; [IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}', '1', 'true', [System.Text.Encoding]::UTF8); }"`
   } else {
     var dirPath = path.dirname(inPath)
     var fileName = path.basename(inPath)
