@@ -53,7 +53,7 @@ function zip (inPath, outPath, cb) {
   }
 
   function doZip2 () {
-    cp.exec(getZipCommand(inPath, outPath), { maxBuffer: Infinity }, function (err) {
+    cp.execFile(getZipCommand(), getZipArgs(inPath, outPath), { cwd: path.dirname(inPath), maxBuffer: Infinity }, function (err) {
       cb(err)
     })
   }
@@ -70,34 +70,49 @@ function zipSync (inPath, outPath) {
     }
     rimraf.sync(outPath)
   }
-  cp.execSync(getZipCommand(inPath, outPath))
-}
-
-function getZipCommand (inPath, outPath) {
-  if (process.platform === 'win32') {
-    return `powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}'); }"`
-  } else {
-    var dirPath = path.dirname(inPath)
-    var fileName = path.basename(inPath)
-    return `cd ${JSON.stringify(dirPath)} && zip -r -y ${JSON.stringify(outPath)} ${JSON.stringify(fileName)}`
-  }
+  cp.execFileSync(getZipCommand(), getZipArgs(inPath, outPath), { cwd: path.dirname(inPath) })
 }
 
 function unzip (inPath, outPath, cb) {
   if (!cb) cb = function () {}
-  cp.exec(getUnzipCommand(inPath, outPath), { maxBuffer: Infinity }, function (err) {
+  cp.execFile(getUnzipCommand(), getUnzipArgs(inPath, outPath), { maxBuffer: Infinity }, function (err) {
     cb(err)
   })
 }
 
 function unzipSync (inPath, outPath) {
-  cp.execSync(getUnzipCommand(inPath, outPath))
+  cp.execFileSync(getUnzipCommand(), getUnzipArgs(inPath, outPath))
 }
 
-function getUnzipCommand (inPath, outPath) {
+function getZipCommand () {
   if (process.platform === 'win32') {
-    return `powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('${inPath}', '${outPath}'); }"`
+    return 'powershell.exe'
   } else {
-    return `unzip -o ${JSON.stringify(inPath)} -d ${JSON.stringify(outPath)}`
+    return 'zip'
+  }
+}
+
+function getUnzipCommand () {
+  if (process.platform === 'win32') {
+    return 'powershell.exe'
+  } else {
+    return 'unzip'
+  }
+}
+
+function getZipArgs (inPath, outPath) {
+  if (process.platform === 'win32') {
+    return ['-nologo', '-noprofile', '-command', `& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}'); }`]
+  } else {
+    var fileName = path.basename(inPath)
+    return ['-r', '-y', outPath, fileName]
+  }
+}
+
+function getUnzipArgs (inPath, outPath) {
+  if (process.platform === 'win32') {
+    return ['-nologo', '-noprofile', '-command', `& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('${inPath}', '${outPath}'); }`]
+  } else {
+    return ['-o', inPath, '-d', outPath]
   }
 }
