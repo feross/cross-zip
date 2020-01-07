@@ -1,5 +1,5 @@
 {
-  "name": "cross-zip",
+  "name": "@exodus/cross-zip",
   "description": "Cross-platform .zip file creation",
   "version": "2.1.6",
   "author": {
