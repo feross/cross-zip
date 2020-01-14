@@ -102,7 +102,7 @@ function getUnzipCommand () {
 
 function getZipArgs (inPath, outPath) {
   if (process.platform === 'win32') {
-    return ['-nologo', '-noprofile', '-command', `"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}'); }"`]
+    return ['-nologo', '-noprofile', '-command', `& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}'); }`]
   } else {
     var fileName = path.basename(inPath)
     return ['-r', '-y', outPath, fileName]
@@ -111,7 +111,7 @@ function getZipArgs (inPath, outPath) {
 
 function getUnzipArgs (inPath, outPath) {
   if (process.platform === 'win32') {
-    return ['-nologo', '-noprofile', '-command', `"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('${inPath}', '${outPath}'); }"`]
+    return ['-nologo', '-noprofile', '-command', `& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('${inPath}', '${outPath}'); }`]
   } else {
     return ['-o', inPath, '-d', outPath]
   }
