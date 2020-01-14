@@ -102,7 +102,13 @@ function getUnzipCommand () {
 
 function getZipArgs (inPath, outPath) {
   if (process.platform === 'win32') {
-    return ['-nologo', '-noprofile', '-command', `& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}'); }`]
+    return [
+      '-nologo',
+      '-noprofile',
+      '-command', '& { param([String]$myInPath, [String]$myOutPath); Add-Type -A "System.IO.Compression.FileSystem"; [IO.Compression.ZipFile]::CreateFromDirectory($myInPath, $myOutPath); }',
+      '-myInPath', inPath,
+      '-myOutPath', outPath
+    ]
   } else {
     var fileName = path.basename(inPath)
     return ['-r', '-y', outPath, fileName]
@@ -111,7 +117,13 @@ function getZipArgs (inPath, outPath) {
 
 function getUnzipArgs (inPath, outPath) {
   if (process.platform === 'win32') {
-    return ['-nologo', '-noprofile', '-command', `& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('${inPath}', '${outPath}'); }`]
+    return [
+      '-nologo',
+      '-noprofile',
+      '-command', '& { param([String]$myInPath, [String]$myOutPath); Add-Type -A "System.IO.Compression.FileSystem"; [IO.Compression.ZipFile]::ExtractToDirectory($myInPath, $myOutPath); }',
+      '-myInPath', inPath,
+      '-myOutPath', outPath
+    ]
   } else {
     return ['-o', inPath, '-d', outPath]
   }
