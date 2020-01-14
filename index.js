@@ -53,7 +53,11 @@ function zip (inPath, outPath, cb) {
   }
 
   function doZip2 () {
-    cp.execFile(getZipCommand(), getZipArgs(inPath, outPath), { cwd: path.dirname(inPath), maxBuffer: Infinity }, function (err) {
+    var opts = {
+      cwd: path.dirname(inPath),
+      maxBuffer: Infinity
+    }
+    cp.execFile(getZipCommand(), getZipArgs(inPath, outPath), opts, function (err) {
       cb(err)
     })
   }
@@ -70,18 +74,28 @@ function zipSync (inPath, outPath) {
     }
     rimraf.sync(outPath)
   }
-  cp.execFileSync(getZipCommand(), getZipArgs(inPath, outPath), { cwd: path.dirname(inPath) })
+  var opts = {
+    cwd: path.dirname(inPath),
+    maxBuffer: Infinity
+  }
+  cp.execFileSync(getZipCommand(), getZipArgs(inPath, outPath), opts)
 }
 
 function unzip (inPath, outPath, cb) {
   if (!cb) cb = function () {}
-  cp.execFile(getUnzipCommand(), getUnzipArgs(inPath, outPath), { maxBuffer: Infinity }, function (err) {
+  var opts = {
+    maxBuffer: Infinity
+  }
+  cp.execFile(getUnzipCommand(), getUnzipArgs(inPath, outPath), opts, function (err) {
     cb(err)
   })
 }
 
 function unzipSync (inPath, outPath) {
-  cp.execFileSync(getUnzipCommand(), getUnzipArgs(inPath, outPath))
+  var opts = {
+    maxBuffer: Infinity
+  }
+  cp.execFileSync(getUnzipCommand(), getUnzipArgs(inPath, outPath), opts)
 }
 
 function getZipCommand () {
