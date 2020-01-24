@@ -11,7 +11,7 @@
     "url": "https://github.com/feross/cross-zip/issues"
   },
   "devDependencies": {
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.0",
     "standard": "*",
     "tape": "^4.0.0"
   },
