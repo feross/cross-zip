@@ -1,4 +1,9 @@
-# cross-zip [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url]
+> ⚠️ Note: This is a fork of the [`cross-zip`](https://github.com/feross/cross-zip) repository with some additional Windows fixes.
+> The credit goes for:
+> - 🎖️[@feross](https://github.com/) for `cross-zip` and 
+> - 🎖️[@malept](https://github.com/malept) for the Windows fixes and the CI.
+
+# cross-zip-win-fix [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url]
 
 [travis-image]: https://img.shields.io/travis/feross/cross-zip/master.svg
 [travis-url]: https://travis-ci.org/feross/cross-zip
@@ -14,13 +19,13 @@
 ## install
 
 ```
-npm install cross-zip
+npm install cross-zip-win
 ```
 
 ## usage
 
 ```js
-var zip = require('cross-zip')
+var zip = require('cross-zip-win')
 
 var inPath = path.join(__dirname, 'myFolder') // folder to zip
 var outPath = path.join(__dirname, 'myFile.zip') // name of output zip file

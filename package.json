@@ -1,5 +1,5 @@
 {
-  "name": "cross-zip",
+  "name": "cross-zip-win-fix",
   "description": "Cross-platform .zip file creation",
   "version": "3.0.0",
   "author": {
