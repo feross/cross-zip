@@ -1,3 +1,4 @@
+/*! cross-zip. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 module.exports = {
   zip: zip,
   zipSync: zipSync,
