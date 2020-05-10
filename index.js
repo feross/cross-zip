@@ -114,14 +114,18 @@ function getUnzipCommand () {
   }
 }
 
+function quotePath (pathToTransform) {
+  return '"' + pathToTransform + '"'
+}
+
 function getZipArgs (inPath, outPath) {
   if (process.platform === 'win32') {
     return [
       '-nologo',
       '-noprofile',
       '-command', '& { param([String]$myInPath, [String]$myOutPath); Add-Type -A "System.IO.Compression.FileSystem"; [IO.Compression.ZipFile]::CreateFromDirectory($myInPath, $myOutPath); exit !$? }',
-      '-myInPath', inPath,
-      '-myOutPath', outPath
+      '-myInPath', quotePath(inPath),
+      '-myOutPath', quotePath(outPath)
     ]
   } else {
     var fileName = path.basename(inPath)
@@ -135,8 +139,8 @@ function getUnzipArgs (inPath, outPath) {
       '-nologo',
       '-noprofile',
       '-command', '& { param([String]$myInPath, [String]$myOutPath); Add-Type -A "System.IO.Compression.FileSystem"; [IO.Compression.ZipFile]::ExtractToDirectory($myInPath, $myOutPath); exit !$? }',
-      '-myInPath', inPath,
-      '-myOutPath', outPath
+      '-myInPath', quotePath(inPath),
+      '-myOutPath', quotePath(outPath)
     ]
   } else {
     return ['-o', inPath, '-d', outPath]
