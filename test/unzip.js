@@ -1,5 +1,4 @@
 var fs = require('fs')
-var mkdirp = require('mkdirp')
 var path = require('path')
 var rimraf = require('rimraf')
 var test = require('tape')
@@ -9,7 +8,7 @@ var filePath = path.join(__dirname, 'content', 'file.txt')
 var fileZipPath = path.join(__dirname, 'content', 'file.txt.zip')
 var tmpPath = path.join(__dirname, 'tmp')
 
-mkdirp.sync(tmpPath)
+fs.mkdirSync(tmpPath, { recursive: true })
 
 test('unzipSync', function (t) {
   var tmpFilePath = path.join(tmpPath, 'file.txt')
@@ -45,7 +44,7 @@ test('unzip from a folder with a space in it', function (t) {
   t.plan(4)
 
   var zipSpacePath = path.join(tmpPath, 'folder space', path.basename(fileZipPath))
-  mkdirp.sync(path.dirname(zipSpacePath))
+  fs.mkdirSync(path.dirname(zipSpacePath), { recursive: true })
   fs.copyFileSync(fileZipPath, zipSpacePath)
 
   var tmpFilePath = path.join(tmpPath, 'file.txt')
