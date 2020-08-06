@@ -34,6 +34,9 @@
   "scripts": {
     "test": "standard && tape test/*.js"
   },
+  "engines": {
+    "node": ">=12.10"
+  },
   "funding": [
     {
       "type": "github",
