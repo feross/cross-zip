@@ -34,9 +34,6 @@
   "scripts": {
     "test": "standard && tape test/*.js"
   },
-  "dependencies": {
-    "rimraf": "^3.0.0"
-  },
   "funding": [
     {
       "type": "github",
