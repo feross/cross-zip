@@ -10,7 +10,6 @@ var cp = require('child_process')
 var fs = require('fs')
 var os = require('os')
 var path = require('path')
-var rimraf = require('rimraf')
 
 function zip (inPath, outPath, cb) {
   if (!cb) cb = function () {}
@@ -47,7 +46,7 @@ function zip (inPath, outPath, cb) {
   // Windows zip command does not overwrite existing files. So do it manually first.
   function doZip () {
     if (process.platform === 'win32') {
-      rimraf(outPath, doZip2)
+      fs.rmdir(outPath, { recursive: true, maxRetries: 3 }, doZip2)
     } else {
       doZip2()
     }
@@ -73,7 +72,7 @@ function zipSync (inPath, outPath) {
       fs.writeFileSync(path.join(tmpPath, path.basename(inPath)), inFile)
       inPath = tmpPath
     }
-    rimraf.sync(outPath)
+    fs.rmdirSync(outPath, { recursive: true, maxRetries: 3 })
   }
   var opts = {
     cwd: path.dirname(inPath),

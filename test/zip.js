@@ -1,6 +1,5 @@
 var fs = require('fs')
 var path = require('path')
-var rimraf = require('rimraf')
 var test = require('tape')
 var zip = require('../')
 
@@ -14,7 +13,7 @@ test('zipSync', function (t) {
   zip.zipSync(filePath, tmpFileZipPath)
 
   var tmpFilePath = path.join(tmpPath, 'file.txt')
-  rimraf.sync(tmpFilePath)
+  fs.rmdirSync(tmpFilePath, { recursive: true })
   zip.unzipSync(tmpFileZipPath, tmpPath)
 
   var tmpFile = fs.readFileSync(tmpFilePath)
@@ -32,7 +31,7 @@ test('zip', function (t) {
     t.error(err)
 
     var tmpFilePath = path.join(tmpPath, 'file.txt')
-    rimraf(tmpFilePath, function (err) {
+    fs.rmdir(tmpFilePath, { recursive: true }, function (err) {
       t.error(err)
 
       zip.unzip(tmpFileZipPath, tmpPath, function (err) {
