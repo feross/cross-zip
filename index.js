@@ -67,10 +67,9 @@ function zipSync (inPath, outPath, includeBaseDirectory) {
 
   if (fs.statSync(inPath).isFile()) {
     includeBaseDirectory = false
-    var inFile = fs.readFileSync(inPath)
     var tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
-    fs.mkdirSync(tmpPath)
-    fs.writeFileSync(path.join(tmpPath, path.basename(inPath)), inFile)
+    fs.mkdirSync(tmpPath, { recursive: true })
+    fs.copyFileSync(inPath, path.join(tmpPath, path.basename(inPath)))
     inPath = tmpPath
   }
   fs.rmdirSync(outPath, { recursive: true, maxRetries: 3 })
