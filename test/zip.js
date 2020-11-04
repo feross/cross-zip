@@ -31,11 +31,19 @@ test('zipSync', function (t) {
   fs.rmdirSync(tmpContentPath, { recursive: true })
   fs.rmdirSync(contentZipPathIncludeParentFolder, { recursive: true })
 
+  var contentZipPathWithoutParentFolder = path.join(tmpPath, 'file3.zip')
+  zip.zipSync(contentPath, contentZipPathWithoutParentFolder)
+  zip.unzipSync(contentZipPathWithoutParentFolder, path.join(tmpPath, 'file3'))
+  t.ok(!fs.existsSync(tmpContentPath))
+  t.deepEqual(fs.readFileSync(path.join(tmpPath, 'file3/file.txt')), file)
+  fs.rmdirSync(contentZipPathWithoutParentFolder, { recursive: true })
+  fs.rmdirSync(path.join(tmpPath, 'file3'), { recursive: true })
+
   t.end()
 })
 
 test('zip', function (t) {
-  t.plan(10)
+  t.plan(4)
 
   var tmpFileZipPath = path.join(tmpPath, 'file.zip')
   zip.zip(filePath, tmpFileZipPath, function (err) {
@@ -55,6 +63,10 @@ test('zip', function (t) {
       })
     })
   })
+})
+
+test('zip dir with parent folder', function (t) {
+  t.plan(6)
 
   var contentZipPathIncludeParentFolder = path.join(tmpPath, 'file2.zip')
   zip.zip(contentPath, contentZipPathIncludeParentFolder, true, function (err) {
@@ -71,6 +83,34 @@ test('zip', function (t) {
 
         fs.rmdir(contentZipPathIncludeParentFolder, { recursive: true }, function (err) {
           t.error(err)
+        })
+      })
+    })
+  })
+})
+
+test('zip dir without parent folder', function (t) {
+  t.plan(7)
+
+  var contentZipPathWithoutParentFolder = path.join(tmpPath, 'file3.zip')
+  zip.zip(contentPath, contentZipPathWithoutParentFolder, function (err) {
+    t.error(err)
+
+    zip.unzip(contentZipPathWithoutParentFolder, path.join(tmpPath, 'file3'), function (err) {
+      t.error(err)
+
+      t.ok(!fs.existsSync(tmpContentPath))
+      var file = fs.readFileSync(filePath)
+      t.deepEqual(fs.readFileSync(path.join(tmpPath, 'file3/file.txt')), file)
+      fs.rmdir(tmpContentPath, { recursive: true }, function (err) {
+        t.error(err)
+
+        fs.rmdir(contentZipPathWithoutParentFolder, { recursive: true }, function (err) {
+          t.error(err)
+
+          fs.rmdir(path.join(tmpPath, 'file3'), { recursive: true }, function (err) {
+            t.error(err)
+          })
         })
       })
     })
