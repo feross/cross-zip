@@ -1,3 +1,4 @@
+/*! cross-zip. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 module.exports = {
   zip: zip,
   zipSync: zipSync,
@@ -9,7 +10,6 @@ var cp = require('child_process')
 var fs = require('fs')
 var os = require('os')
 var path = require('path')
-var rimraf = require('rimraf')
 
 function zip (inPath, outPath, cb) {
   if (!cb) cb = function () {}
@@ -46,14 +46,18 @@ function zip (inPath, outPath, cb) {
   // Windows zip command does not overwrite existing files. So do it manually first.
   function doZip () {
     if (process.platform === 'win32') {
-      rimraf(outPath, doZip2)
+      fs.rmdir(outPath, { recursive: true, maxRetries: 3 }, doZip2)
     } else {
       doZip2()
     }
   }
 
   function doZip2 () {
-    cp.exec(getZipCommand(inPath, outPath), { maxBuffer: Infinity }, function (err) {
+    var opts = {
+      cwd: path.dirname(inPath),
+      maxBuffer: Infinity
+    }
+    cp.execFile(getZipCommand(), getZipArgs(inPath, outPath), opts, function (err) {
       cb(err)
     })
   }
@@ -68,36 +72,77 @@ function zipSync (inPath, outPath) {
       fs.writeFileSync(path.join(tmpPath, path.basename(inPath)), inFile)
       inPath = tmpPath
     }
-    rimraf.sync(outPath)
+    fs.rmdirSync(outPath, { recursive: true, maxRetries: 3 })
   }
-  cp.execSync(getZipCommand(inPath, outPath))
-}
-
-function getZipCommand (inPath, outPath) {
-  if (process.platform === 'win32') {
-    return `powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; Add-Type -A 'System.Text.Encoding'; [IO.Compression.ZipFile]::CreateFromDirectory('${inPath}', '${outPath}', '1', 'true', [System.Text.Encoding]::UTF8); }"`
-  } else {
-    var dirPath = path.dirname(inPath)
-    var fileName = path.basename(inPath)
-    return `cd ${JSON.stringify(dirPath)} && zip -r -y ${JSON.stringify(outPath)} ${JSON.stringify(fileName)}`
+  var opts = {
+    cwd: path.dirname(inPath),
+    maxBuffer: Infinity
   }
+  cp.execFileSync(getZipCommand(), getZipArgs(inPath, outPath), opts)
 }
 
 function unzip (inPath, outPath, cb) {
   if (!cb) cb = function () {}
-  cp.exec(getUnzipCommand(inPath, outPath), { maxBuffer: Infinity }, function (err) {
+  var opts = {
+    maxBuffer: Infinity
+  }
+  cp.execFile(getUnzipCommand(), getUnzipArgs(inPath, outPath), opts, function (err) {
     cb(err)
   })
 }
 
 function unzipSync (inPath, outPath) {
-  cp.execSync(getUnzipCommand(inPath, outPath))
+  var opts = {
+    maxBuffer: Infinity
+  }
+  cp.execFileSync(getUnzipCommand(), getUnzipArgs(inPath, outPath), opts)
 }
 
-function getUnzipCommand (inPath, outPath) {
+function getZipCommand () {
   if (process.platform === 'win32') {
-    return `powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('${inPath}', '${outPath}'); }"`
+    return 'powershell.exe'
   } else {
-    return `unzip -o ${JSON.stringify(inPath)} -d ${JSON.stringify(outPath)}`
+    return 'zip'
+  }
+}
+
+function getUnzipCommand () {
+  if (process.platform === 'win32') {
+    return 'powershell.exe'
+  } else {
+    return 'unzip'
+  }
+}
+
+function quotePath (pathToTransform) {
+  return '"' + pathToTransform + '"'
+}
+
+function getZipArgs (inPath, outPath) {
+  if (process.platform === 'win32') {
+    return [
+      '-nologo',
+      '-noprofile',
+      '-command', '& { param([String]$myInPath, [String]$myOutPath); Add-Type -A "System.IO.Compression.FileSystem"; [IO.Compression.ZipFile]::CreateFromDirectory($myInPath, $myOutPath); exit !$? }',
+      '-myInPath', quotePath(inPath),
+      '-myOutPath', quotePath(outPath)
+    ]
+  } else {
+    var fileName = path.basename(inPath)
+    return ['-r', '-y', outPath, fileName]
+  }
+}
+
+function getUnzipArgs (inPath, outPath) {
+  if (process.platform === 'win32') {
+    return [
+      '-nologo',
+      '-noprofile',
+      '-command', '& { param([String]$myInPath, [String]$myOutPath); Add-Type -A "System.IO.Compression.FileSystem"; [IO.Compression.ZipFile]::ExtractToDirectory($myInPath, $myOutPath); exit !$? }',
+      '-myInPath', quotePath(inPath),
+      '-myOutPath', quotePath(outPath)
+    ]
+  } else {
+    return ['-o', inPath, '-d', outPath]
   }
 }
