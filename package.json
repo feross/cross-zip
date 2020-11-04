@@ -1,19 +1,18 @@
 {
   "name": "cross-zip",
   "description": "Cross-platform .zip file creation",
-  "version": "2.1.6",
+  "version": "4.0.0",
   "author": {
     "name": "Feross Aboukhadijeh",
     "email": "feross@feross.org",
-    "url": "http://feross.org/"
+    "url": "https://feross.org"
   },
   "bugs": {
     "url": "https://github.com/feross/cross-zip/issues"
   },
   "devDependencies": {
-    "mkdirp": "^0.5.1",
     "standard": "*",
-    "tape": "^4.0.0"
+    "tape": "^5.0.0"
   },
   "homepage": "https://github.com/feross/cross-zip",
   "keywords": [
@@ -35,7 +34,21 @@
   "scripts": {
     "test": "standard && tape test/*.js"
   },
-  "dependencies": {
-    "rimraf": "^3.0.0"
-  }
+  "engines": {
+    "node": ">=12.10"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/feross"
+    },
+    {
+      "type": "patreon",
+      "url": "https://www.patreon.com/feross"
+    },
+    {
+      "type": "consulting",
+      "url": "https://feross.org/support"
+    }
+  ]
 }
