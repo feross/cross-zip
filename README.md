@@ -30,12 +30,19 @@ zip.zipSync(inPath, outPath)
 
 ## api
 
-### `zip.zip(inPath, outPath, [callback])`
+### `zip.zip(inPath, outPath, [callback], [args])`
 
 Zip the folder at `inPath` and save it to a .zip file at `outPath`. If a `callback`
-is passed, then it is called with an `Error` or `null`.
+is passed, then it is called with an `Error` or `null`. The optional `args` object:
+```js
+{
+  level: number,
+  incBase: boolean
+}
+```
+controls compression level (restricted to 0-9) and inclusion of the base folder of given inPath argument. Compression level 0 is no compression, 6 is default, and 9 is optimal compression; optimal is default for Windows.
 
-### `zip.zipSync(inPath, outPath)`
+### `zip.zipSync(inPath, outPath, [args])`
 
 Sync version of `zip.zip`.
 
