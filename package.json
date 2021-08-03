@@ -1,12 +1,16 @@
 {
   "name": "cross-zip",
   "description": "Cross-platform .zip file creation",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "author": {
     "name": "Feross Aboukhadijeh",
     "email": "feross@feross.org",
     "url": "https://feross.org"
   },
+  "contributors": [{
+    "name": "Robert Brisita",
+    "url": "https://github.com/rbrisita"
+  }],
   "bugs": {
     "url": "https://github.com/feross/cross-zip/issues"
   },

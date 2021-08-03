@@ -6,12 +6,12 @@ module.exports = {
   unzipSync: unzipSync
 }
 
-var cp = require('child_process')
-var fs = require('fs')
-var os = require('os')
-var path = require('path')
+const cp = require('child_process')
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
 
-function zip (inPath, outPath, cb) {
+function zip (inPath, outPath, cb, args = { level: 6, incBase: false }) {
   if (!cb) cb = function () {}
   if (process.platform === 'win32') {
     fs.stat(inPath, function (err, stats) {
@@ -19,11 +19,11 @@ function zip (inPath, outPath, cb) {
       if (stats.isFile()) {
         copyToTemp()
       } else {
-        doZip()
+        prepare()
       }
     })
   } else {
-    doZip()
+    prepare()
   }
 
   // Windows zip command cannot zip files, only directories. So move the file into
@@ -31,59 +31,58 @@ function zip (inPath, outPath, cb) {
   function copyToTemp () {
     fs.readFile(inPath, function (err, inFile) {
       if (err) return cb(err)
-      var tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
+      const tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
       fs.mkdir(tmpPath, function (err) {
         if (err) return cb(err)
         fs.writeFile(path.join(tmpPath, path.basename(inPath)), inFile, function (err) {
           if (err) return cb(err)
           inPath = tmpPath
-          doZip()
+          prepare()
         })
       })
     })
   }
 
   // Windows zip command does not overwrite existing files. So do it manually first.
-  function doZip () {
+  function prepare () {
     if (process.platform === 'win32') {
-      fs.rmdir(outPath, { recursive: true, maxRetries: 3 }, doZip2)
-    } else {
-      doZip2()
+      fs.rmdirSync(outPath, { recursive: true, maxRetries: 3 })
     }
+    execute(args)
   }
 
-  function doZip2 () {
-    var opts = {
+  function execute (args) {
+    const opts = {
       cwd: path.dirname(inPath),
       maxBuffer: Infinity
     }
-    cp.execFile(getZipCommand(), getZipArgs(inPath, outPath), opts, function (err) {
+    cp.execFile(getZipCommand(), getZipArgs(inPath, outPath, args), opts, function (err) {
       cb(err)
     })
   }
 }
 
-function zipSync (inPath, outPath) {
+function zipSync (inPath, outPath, args) {
   if (process.platform === 'win32') {
     if (fs.statSync(inPath).isFile()) {
-      var inFile = fs.readFileSync(inPath)
-      var tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
+      const inFile = fs.readFileSync(inPath)
+      const tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
       fs.mkdirSync(tmpPath)
       fs.writeFileSync(path.join(tmpPath, path.basename(inPath)), inFile)
       inPath = tmpPath
     }
     fs.rmdirSync(outPath, { recursive: true, maxRetries: 3 })
   }
-  var opts = {
+  const opts = {
     cwd: path.dirname(inPath),
     maxBuffer: Infinity
   }
-  cp.execFileSync(getZipCommand(), getZipArgs(inPath, outPath), opts)
+  cp.execFileSync(getZipCommand(), getZipArgs(inPath, outPath, args), opts)
 }
 
 function unzip (inPath, outPath, cb) {
   if (!cb) cb = function () {}
-  var opts = {
+  const opts = {
     maxBuffer: Infinity
   }
   cp.execFile(getUnzipCommand(), getUnzipArgs(inPath, outPath), opts, function (err) {
@@ -92,7 +91,7 @@ function unzip (inPath, outPath, cb) {
 }
 
 function unzipSync (inPath, outPath) {
-  var opts = {
+  const opts = {
     maxBuffer: Infinity
   }
   cp.execFileSync(getUnzipCommand(), getUnzipArgs(inPath, outPath), opts)
@@ -114,22 +113,33 @@ function getUnzipCommand () {
   }
 }
 
-function quotePath (pathToTransform) {
-  return '"' + pathToTransform + '"'
-}
+function getZipArgs (inPath, outPath, args) {
+  let lvl = args?.level
+  lvl = parseInt(lvl)
+  lvl = isNaN(lvl) ? 6 : lvl
+  lvl = Math.max(0, Math.min(lvl, 9)) // Constrain to 0-9 range
 
-function getZipArgs (inPath, outPath) {
+  const incBase = args?.incBase ? 1 : 0
+
   if (process.platform === 'win32') {
+    if (!lvl) {
+      lvl = 2 // NoCompression
+    } else if (lvl < 4) {
+      lvl = 1 // Fastest
+    } else {
+      lvl = 0 // Optimal (default)
+    }
+
     return [
       '-nologo',
       '-noprofile',
-      '-command', '& { param([String]$myInPath, [String]$myOutPath); Add-Type -A "System.IO.Compression.FileSystem"; [IO.Compression.ZipFile]::CreateFromDirectory($myInPath, $myOutPath); exit !$? }',
-      '-myInPath', quotePath(inPath),
-      '-myOutPath', quotePath(outPath)
+      '-command', `& { Add-Type -A "System.IO.Compression.FileSystem"; \`
+      [IO.Compression.ZipFile]::CreateFromDirectory("${inPath}", "${outPath}", ${lvl}, ${incBase}); \`
+      exit !$? }`
     ]
   } else {
-    var fileName = path.basename(inPath)
-    return ['-r', '-y', outPath, fileName]
+    const fileName = path.basename(inPath)
+    return [`-${lvl}`, '-r', '-y', outPath, fileName]
   }
 }
 
@@ -138,9 +148,9 @@ function getUnzipArgs (inPath, outPath) {
     return [
       '-nologo',
       '-noprofile',
-      '-command', '& { param([String]$myInPath, [String]$myOutPath); Add-Type -A "System.IO.Compression.FileSystem"; [IO.Compression.ZipFile]::ExtractToDirectory($myInPath, $myOutPath); exit !$? }',
-      '-myInPath', quotePath(inPath),
-      '-myOutPath', quotePath(outPath)
+      '-command', `& { Add-Type -A "System.IO.Compression.FileSystem"; \`
+      [IO.Compression.ZipFile]::ExtractToDirectory("${inPath}", "${outPath}"); \`
+      exit !$? }`
     ]
   } else {
     return ['-o', inPath, '-d', outPath]
