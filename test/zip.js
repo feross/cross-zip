@@ -1,4 +1,5 @@
 var fs = require('fs')
+var StreamZip = require('node-stream-zip')
 var path = require('path')
 var test = require('tape')
 var zip = require('../')
@@ -42,6 +43,28 @@ test('zip', function (t) {
 
         t.deepEqual(tmpFile, file)
       })
+    })
+  })
+})
+
+test('zip slash compatibility', function (t) {
+  t.plan(3)
+
+  var tmpFileZipPath = path.join(tmpPath, 'subdir.zip')
+  zip.zip(path.join(__dirname, 'content'), tmpFileZipPath, function (err) {
+    t.error(err)
+
+    var archive = new StreamZip({
+      file: tmpFileZipPath,
+      storeEntries: true,
+      skipEntryNameValidation: true
+    })
+
+    archive.on('ready', function (err) {
+      t.error(err)
+
+      // Specifically testing that this is subdir/sub.txt and NOT subdir\sub.txt on windows
+      t.deepEquals(Object.keys(archive.entries()), ['file.txt', 'file.txt.zip', 'subdir/sub.txt'])
     })
   })
 })
