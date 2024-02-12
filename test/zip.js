@@ -13,7 +13,7 @@ test('zipSync', function (t) {
   zip.zipSync(filePath, tmpFileZipPath)
 
   const tmpFilePath = path.join(tmpPath, 'file.txt')
-  fs.rmdirSync(tmpFilePath, { recursive: true })
+  fs.rmSync(tmpFilePath, { recursive: true, force: true })
   zip.unzipSync(tmpFileZipPath, tmpPath)
 
   const tmpFile = fs.readFileSync(tmpFilePath)
@@ -31,7 +31,7 @@ test('zip', function (t) {
     t.error(err)
 
     const tmpFilePath = path.join(tmpPath, 'file.txt')
-    fs.rmdir(tmpFilePath, { recursive: true }, function (err) {
+    fs.rm(tmpFilePath, { recursive: true }, function (err) {
       t.error(err)
 
       zip.unzip(tmpFileZipPath, tmpPath, function (err) {

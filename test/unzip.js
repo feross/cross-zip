@@ -11,7 +11,7 @@ fs.mkdirSync(tmpPath, { recursive: true })
 
 test('unzipSync', function (t) {
   const tmpFilePath = path.join(tmpPath, 'file.txt')
-  fs.rmdirSync(tmpFilePath, { recursive: true })
+  fs.rmSync(tmpFilePath, { recursive: true, force: true })
   zip.unzipSync(fileZipPath, tmpPath)
 
   const tmpFile = fs.readFileSync(tmpFilePath)
@@ -25,7 +25,7 @@ test('unzip', function (t) {
   t.plan(3)
 
   const tmpFilePath = path.join(tmpPath, 'file.txt')
-  fs.rmdir(tmpFilePath, { recursive: true }, function (err) {
+  fs.rm(tmpFilePath, { recursive: true }, function (err) {
     t.error(err)
 
     zip.unzip(fileZipPath, tmpPath, function (err) {
@@ -42,12 +42,16 @@ test('unzip', function (t) {
 test('unzip from a folder with a space in it', function (t) {
   t.plan(4)
 
-  const zipSpacePath = path.join(tmpPath, 'folder space', path.basename(fileZipPath))
+  const zipSpacePath = path.join(
+    tmpPath,
+    'folder space',
+    path.basename(fileZipPath)
+  )
   fs.mkdirSync(path.dirname(zipSpacePath), { recursive: true })
   fs.copyFileSync(fileZipPath, zipSpacePath)
 
   const tmpFilePath = path.join(tmpPath, 'file.txt')
-  fs.rmdir(tmpFilePath, { recursive: true }, function (err) {
+  fs.rm(tmpFilePath, { recursive: true }, function (err) {
     t.error(err)
 
     zip.unzip(zipSpacePath, tmpPath, function (err) {
