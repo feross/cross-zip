@@ -1,7 +1,7 @@
-# cross-zip [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url]
+# cross-zip [![ci][ci-image]][ci-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url]
 
-[travis-image]: https://img.shields.io/travis/feross/cross-zip/master.svg
-[travis-url]: https://travis-ci.org/feross/cross-zip
+[ci-image]: https://img.shields.io/github/workflow/status/feross/cross-zip/ci/master
+[ci-url]: https://github.com/feross/cross-zip/actions
 [npm-image]: https://img.shields.io/npm/v/cross-zip.svg
 [npm-url]: https://npmjs.org/package/cross-zip
 [downloads-image]: https://img.shields.io/npm/dm/cross-zip.svg
