@@ -11,7 +11,6 @@
     "url": "https://github.com/feross/cross-zip/issues"
   },
   "devDependencies": {
-    "node-stream-zip": "^1.15.0",
     "standard": "*",
     "tape": "^5.0.0"
   },
