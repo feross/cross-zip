@@ -1,15 +1,15 @@
 /*! cross-zip. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 module.exports = {
-  zip: zip,
-  zipSync: zipSync,
-  unzip: unzip,
-  unzipSync: unzipSync
+  zip,
+  zipSync,
+  unzip,
+  unzipSync
 }
 
-var cp = require('child_process')
-var fs = require('fs')
-var os = require('os')
-var path = require('path')
+const cp = require('child_process')
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
 
 function zip (inPath, outPath, cb) {
   if (!cb) cb = function () {}
@@ -31,7 +31,7 @@ function zip (inPath, outPath, cb) {
   function copyToTemp () {
     fs.readFile(inPath, function (err, inFile) {
       if (err) return cb(err)
-      var tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
+      const tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
       fs.mkdir(tmpPath, function (err) {
         if (err) return cb(err)
         fs.writeFile(path.join(tmpPath, path.basename(inPath)), inFile, function (err) {
@@ -53,7 +53,7 @@ function zip (inPath, outPath, cb) {
   }
 
   function doZip2 () {
-    var opts = {
+    const opts = {
       cwd: path.dirname(inPath),
       maxBuffer: Infinity
     }
@@ -66,15 +66,15 @@ function zip (inPath, outPath, cb) {
 function zipSync (inPath, outPath) {
   if (process.platform === 'win32') {
     if (fs.statSync(inPath).isFile()) {
-      var inFile = fs.readFileSync(inPath)
-      var tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
+      const inFile = fs.readFileSync(inPath)
+      const tmpPath = path.join(os.tmpdir(), 'cross-zip-' + Date.now())
       fs.mkdirSync(tmpPath)
       fs.writeFileSync(path.join(tmpPath, path.basename(inPath)), inFile)
       inPath = tmpPath
     }
     fs.rmdirSync(outPath, { recursive: true, maxRetries: 3 })
   }
-  var opts = {
+  const opts = {
     cwd: path.dirname(inPath),
     maxBuffer: Infinity
   }
@@ -83,7 +83,7 @@ function zipSync (inPath, outPath) {
 
 function unzip (inPath, outPath, cb) {
   if (!cb) cb = function () {}
-  var opts = {
+  const opts = {
     maxBuffer: Infinity
   }
   cp.execFile(getUnzipCommand(), getUnzipArgs(inPath, outPath), opts, function (err) {
@@ -92,7 +92,7 @@ function unzip (inPath, outPath, cb) {
 }
 
 function unzipSync (inPath, outPath) {
-  var opts = {
+  const opts = {
     maxBuffer: Infinity
   }
   cp.execFileSync(getUnzipCommand(), getUnzipArgs(inPath, outPath), opts)
@@ -128,7 +128,7 @@ function getZipArgs (inPath, outPath) {
       '-myOutPath', quotePath(outPath)
     ]
   } else {
-    var fileName = path.basename(inPath)
+    const fileName = path.basename(inPath)
     return ['-r', '-y', outPath, fileName]
   }
 }
