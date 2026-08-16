@@ -35,7 +35,7 @@
     "test": "standard && tape test/*.js"
   },
   "engines": {
-    "node": ">=12.10"
+    "node": ">=14.14"
   },
   "funding": [
     {
