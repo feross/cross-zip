@@ -46,7 +46,7 @@ function zip (inPath, outPath, cb) {
   // Windows zip command does not overwrite existing files. So do it manually first.
   function doZip () {
     if (process.platform === 'win32') {
-      fs.rmdir(outPath, { recursive: true, maxRetries: 3 }, doZip2)
+      fs.rm(outPath, { recursive: true, maxRetries: 3 }, doZip2)
     } else {
       doZip2()
     }
